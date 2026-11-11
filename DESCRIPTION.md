@@ -35,7 +35,7 @@ If you stretch the WoW window with another tool, the addon also works without th
 - 📜 **Quest panel:** every quest in your log, spread over as many columns as make the text largest in its zone. Point at a quest to highlight it, click it to open it in the quest log.
 - 📊 **Info panel:** clock, level and XP, XP per hour, gold, free bag slots, durability, kills and FPS. Its text grows with the zone.
 - 📐 **Automatic sizing:** each window is scaled to fit its zone, stretched to fill it, or left at its own size.
-- 📌 **Keep open:** Escape, NPC windows and the game menu no longer close the map, bags or any window you pin.
+- 📌 **Keep open:** Escape no longer closes the map and the bags. When an NPC window closes the map, Farsight opens it again.
 - 🎒 **Bags that fill the zone:** one combined bag, or separate bags stacked in a tall zone.
 - 💬 **Chat in zones:** each chat tab can have a zone of its own.
 - 🗂️ **Layout profiles:** several layouts, switched by hand or automatically for cities, dungeons and the open world. Share them as text.

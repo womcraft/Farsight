@@ -54,7 +54,7 @@ To change things, type `/farsight layout` or left-click the Farsight button on t
 
 In the zone menu you can also set:
 
-- **Keep open:** ESC, NPC windows and the game menu do not close the window. Only its own key or its X button does.
+- **Keep open** (map and bags): ESC does not close them, and when an NPC window closes the map Farsight opens it again. Their own key or the X button still closes them.
 - **Size:** scale to fit the zone, stretch to fill it, or keep its own size.
 - **Split** or **remove** the zone.
 
@@ -104,7 +104,7 @@ Farsight needs no other addon. If you have these, it works together with them, a
 - **OpenMap:** the map can be stretched to fill its zone. Without OpenMap, WoW's own map keeps its shape and is scaled to fit.
 - **Without either:** Farsight moves, sizes and keeps open every window you put in a zone by itself.
 
-**Map always open:** normally WoW closes the map when you talk to an NPC or vendor, and Farsight opens it again afterwards. The option "Keep the map open beside NPC, vendor and other windows too" stops that. It is marked experimental: if the map ever refuses to close in combat, turn it off.
+**Map and NPC windows:** WoW closes the map when you talk to an NPC or vendor, and Farsight opens it again afterwards. Keeping it open beside NPC windows would mean taking it out of WoW's window manager, which causes errors in other parts of the interface, so Farsight does not do that.
 
 ## Good to know
 

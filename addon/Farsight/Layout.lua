@@ -234,8 +234,10 @@ local function zoneMenu(anchor, zone, label)
 			NS.AssignWindow(zone.screen, zone.index, nil); NS.RefreshLayoutOverlay() end }
 		if cur then
 			items[#items + 1] = { text = "Settings for " .. NS.WindowLabel(cur), header = true }
-			items[#items + 1] = { text = "Keep open (ESC does not close it)", checked = NS.IsPinned(cur), keep = true,
-				func = function() NS.SetPinned(cur, not NS.IsPinned(cur)) end }
+			if cur == "bags" or cur == "map" then
+				items[#items + 1] = { text = "Keep open (ESC does not close it)", checked = NS.IsPinned(cur), keep = true,
+					func = function() NS.SetPinned(cur, not NS.IsPinned(cur)) end }
+			end
 			if cur ~= "bags" then
 				local fit = NS.FitFor(cur, zone.data)
 				items[#items + 1] = { text = "Size: " .. FITS[fit] .. "  (click to change)", keep = true, func = function()

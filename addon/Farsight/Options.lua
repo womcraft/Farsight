@@ -211,7 +211,7 @@ local function build()
 	cbBags:SetPoint("TOPLEFT", 14, y)
 	local cbMap = checkbox(p, "World map", function() return NS.IsPinned("map") end, function(v) NS.SetPinned("map", v) end)
 	cbMap:SetPoint("TOPLEFT", 110, y)
-	local kn = label(p, "Other windows: click their zone tab in the layout editor.", "GameFontDisableSmall")
+	local kn = label(p, "Only the bags and the map can be kept open.", "GameFontDisableSmall")
 	kn:SetPoint("TOPLEFT", 250, y - 6)
 	y = y - 26
 	y = y - note("How it works: closing the bags and the map on Escape is built into WoW and cannot be switched off. So Farsight runs a small script: it hides them itself just before the game handles the key, and opens them again right after. The game menu and other windows keep working as usual. It is the same script for WoW's own map and for OpenMap's map. Your own keys (B, M) and the X button still close them.", 42, y) - 6
@@ -222,13 +222,6 @@ local function build()
 	cbSep:SetPoint("TOPLEFT", 14, y)
 	y = y - 24
 	y = y - note("WoW's combined bag is always 10 slots wide, so it stays small in a tall, narrow zone. Separate bags are 4 slots wide and are stacked to fill the zone. B then opens and closes all of them together.", 42, y) - 6
-
-	-- ----- map always open
-	local cbAlways = checkbox(p, "Keep the map open beside NPC, vendor and other windows too (experimental)",
-		function() return db.mapAlways end, function(v) db.mapAlways = v end)
-	cbAlways:SetPoint("TOPLEFT", 14, y)
-	y = y - 24
-	y = y - note("Normally WoW closes the map when an NPC window opens, and Farsight opens it again afterwards. With this on, the map is taken out of WoW's window manager and stays up. Needs \"World map\" above. If the map ever refuses to close in combat, turn this off: that is the known side effect.", 42, y) - 10
 
 	-- ----- other addons: what Farsight found and how it works together with them
 	local hA = label(p, "Other addons", "GameFontNormal"); hA:SetPoint("TOPLEFT", 18, y)

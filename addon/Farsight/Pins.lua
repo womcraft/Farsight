@@ -311,14 +311,13 @@ local function mapAlwaysWatch()
 	end
 end
 
+-- Taking windows out of WoW's panel manager (UIPanelWindows, UISpecialFrames, panel attributes) turned out to
+-- "taint" the panel manager: Edit Mode, unit frames and action bars then threw secret-value errors and could
+-- misbehave in combat. So Farsight no longer does it. Keep open is for bags and the map only, which use the
+-- ESC script above, and "map always open" is gone. Anything still unmanaged (from an older version, before
+-- this /reload) is put back.
 local function genericWatch()
-	mapAlwaysWatch()
-	for key in pairs(NS.db.pins) do
-		if key ~= "bags" and key ~= "map" and pinned(key) then unmanage(key) end
-	end
-	for key in pairs(unmanaged) do
-		if key ~= "map" and not pinned(key) then remanage(key) end
-	end
+	for key in pairs(unmanaged) do remanage(key) end
 end
 
 -- ================================================================ wiring

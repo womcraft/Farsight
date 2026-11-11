@@ -661,16 +661,26 @@ local barSetAt = {}
 
 function NS.BarSetting(key) return BAR_SETTING[key] end
 
+-- Bars 2-8 are switched with WoW's own SetActionBarToggles (the same call the options window ends in).
+-- Going through Settings.SetValue from an addon would leave Farsight's mark ("taint") on the setting, and
+-- the action bar code reads it in combat.
+local BAR_INDEX = { MultiBarBottomLeft = 1, MultiBarBottomRight = 2, MultiBarRight = 3, MultiBarLeft = 4,
+	MultiBar5 = 5, MultiBar6 = 6, MultiBar7 = 7 }
+
+local function barShownSetting(key)
+	if not GetActionBarToggles then return nil end
+	return (select(BAR_INDEX[key], GetActionBarToggles())) and true or false
+end
+
 local function setBar(key, on)
-	local var = BAR_SETTING[key]
-	if not var or not Settings or not Settings.GetValue or not Settings.SetValue then return false end
-	local ok, cur = pcall(Settings.GetValue, var)
-	if not ok then return false end
-	if (cur and true or false) == on then return true end
+	if not (GetActionBarToggles and SetActionBarToggles and BAR_INDEX[key]) then return false end
+	if barShownSetting(key) == on then return true end
 	-- the game confirms the change a moment later; do not send it again meanwhile
 	if barSetAt[key] and GetTime() - barSetAt[key] < 3 then return true end
 	barSetAt[key] = GetTime()
-	return (pcall(Settings.SetValue, var, on))
+	local t = { GetActionBarToggles() }
+	t[BAR_INDEX[key]] = on
+	return (pcall(SetActionBarToggles, unpack(t, 1, 7)))
 end
 
 local function syncBars(assigned)
@@ -679,8 +689,8 @@ local function syncBars(assigned)
 	if InCombatLockdown() then combatPending = true return end
 	for key in pairs(BAR_SETTING) do
 		if assigned[key] then
-			local ok, cur = pcall(Settings.GetValue, BAR_SETTING[key])
-			if ok and not cur and setBar(key, true) then
+			local cur = barShownSetting(key)
+			if cur == false and setBar(key, true) then
 				db.barsOn[key] = true
 				NS.Debug("switched on " .. key)
 			end
@@ -712,7 +722,7 @@ function NS.ApplyWindows()
 		end
 	end
 	if not NS.Active() then return end
-	if Settings and Settings.GetValue then syncBars(assigned) end
+	if GetActionBarToggles then syncBars(assigned) end
 	if NS.SyncBarDirections then pcall(NS.SyncBarDirections) end
 	-- windows that left their zone: MoveAny gets its saved values back, chat tabs go back into the chat window
 	local everywhere = keysEverywhere()
@@ -779,6 +789,10 @@ end
 -- How large the bars of a zone get with all of them horizontal (or vertical): the common scale of the pack.
 local function packScale(zone, horizontal)
 	local r = zone.rect
+	if not r then
+		for _, z in ipairs(NS.AllZones()) do if z.data == zone.data then r = z.rect end end
+		if not r then return 0 end
+	end
 	local W, H = r.w - 2 * PAD, r.h - 2 * PAD
 	local sumW, sumH, maxW, maxH, n = 0, 0, 0, 0, 0
 	for _, k in ipairs(NS.ZoneKeys(zone.data)) do
@@ -802,6 +816,7 @@ function NS.ZoneBarDirection(zone)
 end
 
 local orientBusy = 0
+local orientPending = {}   -- [frame] = direction saved but not shown until the layout is loaded again
 local function setOrientations(changes)   -- changes = { [frame] = true (horizontal) / false }
 	if not (C_EditMode and C_EditMode.GetLayouts and C_EditMode.SaveLayouts and EditModePresetLayoutManager) then
 		NS.Print("Bar direction cannot be changed in this version of the game. Use Edit Mode instead.")
@@ -850,13 +865,16 @@ local function setOrientations(changes)   -- changes = { [frame] = true (horizon
 		NS.Print("WoW's preset Edit Mode layout cannot be changed, so it was copied to a new layout \"" .. added
 			.. "\" to change the bar direction there.")
 	end
-	-- WoW lays out the bars again when it gets the new layout; if it does not tell us, read it ourselves
-	C_Timer.After(0.5, function()
+	-- Ask the game to load the layout again; WoW then lays the bars out itself. Calling Edit Mode's own Lua from
+	-- here would taint it (errors in unit frames, action bars acting up in combat), so if the game does not
+	-- reload it by itself the change waits for the next /reload.
+	for fr, horizontal in pairs(changes) do orientPending[fr] = horizontal end
+	if not added and C_EditMode.SetActiveLayout then pcall(C_EditMode.SetActiveLayout, activeIndex) end
+	C_Timer.After(1, function()
 		local still
 		for fr, horizontal in pairs(changes) do if (fr.isHorizontal and true or false) ~= horizontal then still = true end end
-		if still and EditModeManagerFrame and EditModeManagerFrame.UpdateLayoutInfo and not InCombatLockdown() then
-			NS.Debug("Edit Mode did not reload the layout by itself; reloading it")
-			pcall(EditModeManagerFrame.UpdateLayoutInfo, EditModeManagerFrame, C_EditMode.GetLayouts())
+		if still then
+			NS.Print("The bar direction is saved in your Edit Mode layout. Type /reload to see it.")
 		end
 		NS.ApplySoon(0.1)
 	end)
@@ -874,7 +892,7 @@ function NS.SyncBarDirections()
 				local fr = NS.WindowFrames(k)[1]
 				if isOrientable(fr) then
 					local want = (dir == "h")
-					if (fr.isHorizontal and true or false) ~= want then changes[fr] = want; any = true end
+					if (fr.isHorizontal and true or false) ~= want and orientPending[fr] ~= want then changes[fr] = want; any = true end
 				end
 			end
 		end
