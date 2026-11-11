@@ -1,0 +1,14 @@
+<Bindings>
+	<Binding name="FARSIGHT_LAYOUT" header="FARSIGHT" category="ADDONS">
+		Farsight_Binding("layout")
+	</Binding>
+	<Binding name="FARSIGHT_NEXTPROFILE" category="ADDONS">
+		Farsight_Binding("next")
+	</Binding>
+	<Binding name="FARSIGHT_INFO" category="ADDONS">
+		Farsight_Binding("info")
+	</Binding>
+	<Binding name="FARSIGHT_OPTIONS" category="ADDONS">
+		Farsight_Binding("options")
+	</Binding>
+</Bindings>

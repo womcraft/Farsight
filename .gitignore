@@ -1,0 +1,6 @@
+# built files: downloads go in GitHub Releases
+*.exe
+*.zip
+release/
+# screenshots taken while testing
+tools/*.png

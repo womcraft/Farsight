@@ -1,0 +1,15 @@
+## Interface: 16001
+## Title: Farsight
+## Notes: Spread WoW across several screens: game world on one, map, bags and other windows on the rest. /farsight
+## Author: claude-make-no-mistake
+## Version: 0.4.3
+## IconTexture: Interface\Icons\INV_Misc_Spyglass_03
+## AddonCompartmentFunc: Farsight_OnAddonCompartmentClick
+## OptionalDeps: OpenMap, MoveAny
+## SavedVariables: FarsightDB
+Monitors.lua
+Core.lua
+Windows.lua
+Pins.lua
+Layout.lua
+Options.lua
