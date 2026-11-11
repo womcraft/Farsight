@@ -122,4 +122,4 @@ Run `launcher\build.bat`. It uses the C# compiler that ships with Windows; nothi
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+Public domain ([The Unlicense](LICENSE)): do whatever you want with it.
